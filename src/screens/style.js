@@ -8,8 +8,8 @@ export const ContentStyles = StyleSheet.create({
         alignItems: 'center',
     },
     ls_image_box: {
-        width: 150,
-        height: 150,
+        width: 120,
+        height: 120,
         overflow: 'hidden',
     },
     ls_img: {

@@ -11,6 +11,7 @@ import BackgroundService from 'react-native-background-actions';
 /** Local Imports */
 import { AddLocation } from '../utils/api-call';
 import { ContentStyles } from './style';
+import Toast from 'react-native-toast-message';
 
 const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
@@ -25,8 +26,12 @@ const Content = () => {
         mutationKey: ['location_mutation', Location?.coords?.latitude, Location?.coords?.longitude],
         mutationFn: (data) => AddLocation(data),
         onSuccess: (response) => {
-            console.log("🚀 ~ Content ~ response:", response);
-        },
+            Toast.show({
+              type: 'success',
+              text1: 'Success',
+              text2: response?.message,
+            });
+          },
         enabled: !!Location?.coords,
     });
 
@@ -75,8 +80,25 @@ const Content = () => {
 
     useEffect(() => {
         RequestLocationPermission();
+        triggerBounceAnimation();
     }, []);
 
+    const triggerBounceAnimation = () => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.spring(bounceValue, {
+                    toValue: 1.1,
+                    friction: 2,
+                    useNativeDriver: true,
+                }),
+                Animated.spring(bounceValue, {
+                    toValue: 1,
+                    friction: 2,
+                    useNativeDriver: true,
+                }),
+            ])
+        ).start();
+    };
     /**
      * Start background api call
      */
@@ -94,7 +116,7 @@ const Content = () => {
                 color: '#ff00ff',
                 linkingURI: 'yourSchemeHere://chat/jane',
                 parameters: {
-                    delay: 900000,
+                    delay: 200000,
                 },
             });
             console.log('Background service started.');
@@ -112,7 +134,7 @@ const Content = () => {
     return (
         <View style={styles.ls_container}>
             <Animated.View style={[styles.ls_image_box, { transform: [{ scale: bounceValue }] }]}>
-                <Image style={styles.ls_img} source={require('../../assets/images/Location.png')} />
+                <Image style={styles.ls_img} source={require('../../assets/images/location.png')} />
             </Animated.View>
             <View style={styles.ls_text_container}>
                 <Text style={styles.ls_text}>
